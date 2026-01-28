@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <title>Receipe_app</title>
+</head>
+<body>
+
+  <div class="container">
+        <form class="card p-3 shadow-lg" method="post" enctype="multipart/form-data">
+            {% csrf_token%}
+            <h2>Add Receipe</h2>
+            <hr>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Receipe name</label>
+                <input name="receipe_name"  required type="text" class="form-control" >
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1" >Receipe description</label>
+                <textarea class="form-control" name="receipe_description"required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Receipe Image</label>
+                <input name="receipe_image"type="file" class="form-control" >
+            </div>
+            
+            <button type="submit" class="btn btn-success">Add Receipe</button>
+        </form>
+        <hr>
+        <div class="mt-5">
+          <form action="">
+          <div class="mx-auto col6">
+            <label for="form-label">search Food</label>
+            <input name="search"   type="text" class="form-control" >
+
+            
+          </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+          </form>
+        </div>
+
+        {{receipes}}
+    </div>
+
+    <table class="table mt-5">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Receipe name</th>
+      <th scope="col">Receipe Desc</th>
+      <th scope="col">Image</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for receipe in receipes %}
+    <tr>
+      <th scope="row">{{forloop.counter}}</th>
+      <td>{{receipe.receipe_name}}</td>
+      <td>{{receipe.receipe_description}}</td>
+      {% if receipe.receipe_image %}
+        <td><img src="{{ receipe.receipe_image.url }}" width="120"></td>
+      {% endif %}
+      <td>
+        <a href="/delete-receipe/{{receipe.id}}" class="btn- btn-danger">Delete</a>
+        <a href="/update-receipe/{{receipe.id}}" class="btn- btn-success">Update</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+    
+</body>
+</html>
