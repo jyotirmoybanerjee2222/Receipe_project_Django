@@ -3,9 +3,11 @@ from .models import *
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required(login_url='/login/')
 def receipes(request):
     if request.method=="POST":
         data=request.POST
@@ -17,6 +19,7 @@ def receipes(request):
         # print(receipe_image)
 
         Receipe.objects.create(
+            user=request.user,
             receipe_name=receipe_name,
             receipe_description=receipe_description,
             receipe_image=receipe_image
@@ -24,7 +27,7 @@ def receipes(request):
 
         return redirect('/receipes')
     
-    queryset = Receipe.objects.all()
+    queryset = Receipe.objects.filter(user=request.user)#filter by user
     if request.GET.get('search'):
         queryset = queryset.filter(receipe_name__icontains = request.GET.get('search'))
 
@@ -34,15 +37,15 @@ def receipes(request):
 
     return render(request,'receipes.html',context)
 
-
+@login_required
 def delete_receipe(request,id):
-    queryset = Receipe.objects.get(id=id)
+    queryset = Receipe.objects.get(id=id,user=request.user)
     queryset.delete()
     return redirect('/receipes/')
 
-
+@login_required
 def update_receipe(request,id):
-    queryset = Receipe.objects.get(id=id)
+    queryset = Receipe.objects.get(id=id,user=request.user)
     context ={'receipes':queryset}
 
     if request.method == "POST":
@@ -70,9 +73,9 @@ def login_page(request):
         username = request.POST.get('username','').strip()
         password = request.POST.get('password','').strip()
 
-        if not User.objects.filter(username=username).exists():
-            messages.info(request,'Invalid Username')
-            return redirect('/login/')
+        # if not User.objects.filter(username=username).exists():
+        #     messages.info(request,'Invalid Username')
+        #     return redirect('/login/')
         
         user = authenticate(username=username,password=password)
         if user is None:
@@ -84,6 +87,13 @@ def login_page(request):
 
 
     return render(request,'login.html')
+
+@login_required
+def logout_page(request):
+    logout(request)
+    return redirect('/login/')
+
+
 
 def register(request):
     if request.method=="POST":

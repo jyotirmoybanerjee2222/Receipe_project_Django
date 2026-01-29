@@ -1,1 +1,14 @@
+# environments
+env/
+venv/
 .env
+
+# python cache
+__pycache__/
+*.pyc
+
+# database
+db.sqlite3
+
+# editor
+.vscode/
