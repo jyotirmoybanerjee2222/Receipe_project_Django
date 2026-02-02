@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Recipe
 from .serializers import RecipeSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.decorators import permission_classes
+
 
 
 @api_view(['GET', 'POST'])
@@ -42,7 +45,8 @@ def recipe_detail(request, pk):
         return Response(status=204)
     
 
-@api_view(['GET'])
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def sample_recipe(request):
     data = [
         {
